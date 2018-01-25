@@ -13,7 +13,7 @@ class App extends Component {
 
     this.state = {
       newTodo: '',
-      todos: [ ] // todoTitle '', completed boolan
+      todos: [ ] // todoTitle '', completed boolean
       
     }
 
@@ -48,10 +48,23 @@ class App extends Component {
                   value={this.state.newTodo}
                   placeholder="What needs to be done?"
                   onInput={this.handleInputChange}
+                  style={ {width: '90%'}}
                 />
             </form>
           </div>
-
+        {
+          this.state.todos.map( (todo, index) => {  
+            return (
+              <div className="row" key={index}>
+              <div> 
+                <input type="checkbox" />
+                <span> { todo.todoTitle } </span>
+              </div>
+            </div>
+            );
+          })
+        }
+        
         <footer>
           <p style={ {marginBottom: '10px'} }>Double-click to edit a todo</p>
           <p>Created by Del, Angela, and Andy</p>
