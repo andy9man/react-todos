@@ -1,0 +1,27 @@
+- App
+  - X header=app name
+  - Todo Application
+    -  New Todo Input Area
+      - Arrow for full list toggle
+        - Functionality onClick="Mark all completed/active"
+      - X New Todo Input
+        - X Placeholder = {What needs to be done}
+        - save input on submit
+    - Todo List Area
+      - List/Cards of todos that have already been entered
+        - TodoItem Row
+          - Completed/Active toggle
+          - Todo Item Content
+            - NotEditing
+              - Todo Message
+              - onHover=Clear Button appears
+            - Editing
+              - Input Box
+      - Todo App Footer
+        - Todo count
+        - Filters
+          - All
+          - Active
+          - Complete
+        - Clear Button
+  - footer
