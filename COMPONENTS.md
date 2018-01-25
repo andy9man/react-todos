@@ -24,4 +24,4 @@
           - Active
           - Complete
         - Clear Button
-  - footer
+  - X footer

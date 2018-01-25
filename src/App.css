@@ -2,7 +2,14 @@
 
 body {
   font-family: 'Raleway', sans-serif;
-  background: linear-gradient(whitesmoke, white);
+  background: linear-gradient(#EDEDED, #fff);
+}
+
+footer {
+  margin-top: auto;
+  margin-bottom: auto;
+  color: #BDBDBD;
+  text-align: center;
 }
 
 h1 {
