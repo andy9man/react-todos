@@ -27,7 +27,7 @@ input {
   font-size: 1.2em;
   font-weight: lighter;
   font-family: var(--custom-font);
-  outline: 0px;
+  outline: 0;
  }
 
  input:focus {
@@ -50,17 +50,15 @@ input::-webkit-input-placeholder {
   /* -- this is for horizontal align -- */
   align-items: center;
   padding: 20px;
-  border: 2px solid purple;
 }
 
 .row {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   background-color: white;
   height: 40px;
   width: 100%;
   padding: 10px;
   border: 1px solid #BDBDBD;
-
 }
