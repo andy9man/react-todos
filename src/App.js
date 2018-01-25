@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
 
+const createTodoObj = (title,completed) => { 
+  return ({ todoTitle: title,
+           completed: completed
+  });
+}
 
 class App extends Component {
   constructor(props) {
@@ -8,15 +13,26 @@ class App extends Component {
 
     this.state = {
       newTodo: '',
-      todos: []
+      todos: [ ] // todoTitle '', completed boolan
+      
     }
 
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   handleInputChange(e) {
     this.setState( {newTodo: e.target.value} );
+
   }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    this.setState( {todos: this.state.todos.concat([createTodoObj(this.state.newTodo, false)]), newTodo: ''} );
+    
+  }
+
+
 
   render() {
     return (
@@ -26,12 +42,14 @@ class App extends Component {
           <h1>{this.props.title}</h1>
         </header>
           <div className="row">
-            <input
-              type="text"
-              value={this.state.newTodo}
-              placeholder="What needs to be done?"
-              onInput={this.handleInputChange}
-            />
+            <form onSubmit={this.handleSubmit}  >
+                <input
+                  type="text"
+                  value={this.state.newTodo}
+                  placeholder="What needs to be done?"
+                  onInput={this.handleInputChange}
+                />
+            </form>
           </div>
 
         <footer>

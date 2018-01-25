@@ -6,7 +6,7 @@
         - Functionality onClick="Mark all completed/active"
       - X New Todo Input
         - X Placeholder = {What needs to be done}
-        - save input on submit
+        - X save input on submit
     - Todo List Area
       - List/Cards of todos that have already been entered
         - TodoItem Row
