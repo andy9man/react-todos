@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 
+//HELPFER FUNCTION:  Give me a Todo Object
 const createTodoObj = (title) => {
   return ({
     id: Date.now(),
@@ -10,6 +11,7 @@ const createTodoObj = (title) => {
   });
 }
 
+//HELPER FUNCTION:  Returns the ID where the element ID resides in the array
 const getArrayId = (arr, id) => {
   for( let i = 0; i < arr.length; i++) {
     if(arr[i].id === id) {
@@ -19,18 +21,18 @@ const getArrayId = (arr, id) => {
   return "We didn't find it";
 }
 
-//Returns the number of items not complete with formated text
+//HELPER FUNCTION:  Returns the number of items not complete with formated text
 const getItemsLeft = (arr) => {
   const items = arr.filter( todo => !todo.completed).length;
   return  items + (items === 1 ? " item left": " items left");
 }
 
-//returns true or false if any items are marked 'complete'
+//HELPER FUNCTION: Returns true or false if any items are marked 'complete'
 const  anyComplete = (arr) => {
   return arr.length === 0 ? false : arr.filter( todo => todo.completed).length > 0;
 }
 
-//takes an array and removes all 'completed' items and returns that new array
+//HELPER FUNCTION:  Takes an array and removes all 'completed' items and returns that new array
 const clearCompletedArray = (arr) => {
   let removed = false;
   arr.forEach( (todo, index) => {
@@ -42,6 +44,7 @@ const clearCompletedArray = (arr) => {
   return removed ? clearCompletedArray(arr) : arr;
 }
 
+//HELPER FUNCTION:  Returns a filtered array based on some criteria
 const getFilteredArray = (arr, filter) => {
   switch(filter) {
     case 'active':
@@ -53,6 +56,7 @@ const getFilteredArray = (arr, filter) => {
   }
 }
 
+//HELPER FUNCTION:  Return an array that is checked
 const allChecked = (arr) => {
   let allCheck = true;
   arr.forEach( todo => {
@@ -92,7 +96,9 @@ class App extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.setState( {todos: this.state.todos.concat([createTodoObj(this.state.newTodo)]), newTodo: ''} );
+    if(this.state.newTodo.trim() !== '') {
+      this.setState( {todos: this.state.todos.concat([createTodoObj(this.state.newTodo)]), newTodo: ''} );
+    }
   }
 
   handleCheckAllToggle() {
@@ -202,38 +208,15 @@ class App extends Component {
             );
         })}
 
-        <div className="row row-filters" style={this.state.todos.length === 0 ? {visibility: 'hidden'} : {visibility: 'visible'}}>
 
-          <div>{getItemsLeft(this.state.todos.slice())}</div>
-
-          <div className="filter-buttons">
-              <button
-                className={this.state.filter === 'all' ? 'selected' : ''}
-                name="all"
-                onClick={this.handleFilterClick}
-              >All</button>
-
-              <button
-                className={this.state.filter === 'active' ? 'selected' : ''}
-                name="active"
-                onClick={this.handleFilterClick}
-              >Acive</button>
-
-              <button
-                className={this.state.filter === 'completed' ? 'selected' : ''}
-                name="completed"
-                onClick={this.handleFilterClick}
-              >Completed</button>
-          </div>
-
-          <div>
-            <button
-              id="clearCompleted"
-              style={anyComplete(this.state.todos) ? {visibility: 'visible'} : {visibility: 'hidden'} }
-              onClick={this.handleClearCompleted}
-            >Clear Completed</button>
-          </div>
-        </div>
+        <TodoFilter
+          showFilter={this.state.todos.length === 0 ? {visibility: 'hidden'} : {visibility: 'visible'}}
+          filter={this.state.filter}
+          itemsLeft={getItemsLeft(this.state.todos.slice())}
+          showClearCompleted={anyComplete(this.state.todos) ? {visibility: 'visible'} : {visibility: 'hidden'} }
+          handleClearCompleted={this.handleClearCompleted}
+          handleFilterClick={this.handleFilterClick}
+        />
 
         <footer>
           <p style={ {marginBottom: '10px'} }>Double-click to edit a todo</p>
@@ -300,6 +283,47 @@ class TodoRow extends Component {
 
       </div>
 
+    );
+  }
+}
+
+class TodoFilter extends Component {
+
+  render() {
+    return (
+
+      <div className="row row-filters" style={this.props.showFilter}>
+
+        <div>{this.props.itemsLeft}</div>
+
+        <div className="filter-buttons">
+          <button
+            className={this.props.filter === 'all' ? 'selected' : ''}
+            name="all"
+            onClick={this.props.handleFilterClick}
+          >All</button>
+
+          <button
+            className={this.props.filter === 'active' ? 'selected' : ''}
+            name="active"
+            onClick={this.props.handleFilterClick}
+          >Acive</button>
+
+          <button
+            className={this.props.filter === 'completed' ? 'selected' : ''}
+            name="completed"
+            onClick={this.props.handleFilterClick}
+          >Completed</button>
+        </div>
+
+        <div>
+          <button
+            id="clearCompleted"
+            style={this.props.showClearCompleted}
+            onClick={this.props.handleClearCompleted}
+          >Clear Completed</button>
+        </div>
+      </div>
     );
   }
 }
