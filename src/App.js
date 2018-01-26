@@ -3,16 +3,26 @@ import './App.css';
 
 const createTodoObj = (title) => {
   return ({
+    id: Date.now(),
     todoTitle: title,
     completed: false,
     edit: false
   });
 }
 
+const getArrayId = (arr, id) => {
+  for( let i = 0; i < arr.length; i++) {
+    if(arr[i].id === id) {
+      return i;
+    }
+  }
+  return "We didn't find it";
+}
+
 //Returns the number of items not complete with formated text
 const getItemsLeft = (arr) => {
-  const items = arr.filter( todo => !todo.complete).length;
-  return  items + (items > 1 ? " items left" : " item left");
+  const items = arr.filter( todo => !todo.completed).length;
+  return  items + (items === 1 ? " item left": " items left");
 }
 
 //returns true or false if any items are marked 'complete'
@@ -73,6 +83,7 @@ class App extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleClearCompleted = this.handleClearCompleted.bind(this);
     this.handleFilterClick = this.handleFilterClick.bind(this);
+    this.handleUpdateItem = this.handleUpdateItem.bind(this);
   }
 
   handleInputChange(e) {
@@ -93,31 +104,50 @@ class App extends Component {
     this.setState( {todos: newTodoArray, allChecked: checked} );
   }
 
-  handleCheckChange(todoID) {
+  handleCheckChange(todoId) {
+    console.log("Marking Todo Item: " + todoId);
     const newArray = this.state.todos.slice(); //this creates a COPY of the array, not a reference to this.state.todos
-    newArray[todoID].completed = !newArray[todoID].completed;
+    console.log(getArrayId(newArray, todoId));
+    newArray[ getArrayId(newArray, todoId) ].completed = !newArray[ getArrayId(newArray, todoId) ].completed;
     this.setState( {todos: newArray});
+    console.log(todoId);
   }
 
-  handleDeleteClick(todoID) {
-    if (todoID !== -1) {
+  handleDeleteClick(todoId) {
+    if ( !isNaN(todoId) ) {
+      const index = getArrayId(this.state.todos.slice(), todoId);
+
+      console.log("Deleting Todo Item: " + todoId);
+      console.log("Todo Item ID: " + index);
+
+      //arr = (this.state.todos.length === 1 ? [] : arr.splice( index, 1));
       //if array is only one element, just reset it to a new array
       // - otherwise remove item at the id
-      this.setState( {todos: this.state.todos.length === 1 ? [] : this.state.todos.slice().splice(todoID, 1)} );
+      let arr = this.state.todos.slice();
+      arr.length > 1 ? arr.splice(index, 1) : arr = [];
+      return this.setState({ todos: arr});
     }
   }
 
-  handleDoubleClick(todoID) {
-    const newArray = this.state.todos.slice();
-    newArray[todoID].edit = true;
-    this.setState( {todos: newArray} );
+  handleDoubleClick(todoId) {
+    if( !isNaN(todoId) ) {
+      let arr = this.state.todos.slice();
+      console.log("Attempting to edit: " + todoId)
+      const index = getArrayId( arr, todoId);
+      arr[index].edit = true;
+      this.setState( {todos: arr} );
+    }
   }
 
-  handleUpdateItem(todoID, newTitle) {
-    const newArray = this.state.todos.slice();
-    newArray[todoID].todoTitle = newTitle;
-    newArray[todoID].edit = false;
-    this.setState( {todos: newArray} );
+  handleUpdateItem(todoId, newTitle) {
+    if( !isNaN(todoId) ) {
+      let arr = this.state.todos.slice();
+      const index = getArrayId( arr, todoId);
+      console.log("Editing item: " + todoId + "\nCurrent: " + arr[index].todoTitle + "\nNew: " + newTitle);
+      arr[index].todoTitle = newTitle;
+      arr[index].edit = false;
+      this.setState( {todos: arr} );
+    }
   }
 
   handleFilterClick(e) {
@@ -129,8 +159,6 @@ class App extends Component {
   handleClearCompleted() {
     this.setState( {todos: clearCompletedArray(this.state.todos.slice())});
   }
-
-
 
   render() {
     return (
@@ -176,7 +204,7 @@ class App extends Component {
 
         <div className="row row-filters" style={this.state.todos.length === 0 ? {visibility: 'hidden'} : {visibility: 'visible'}}>
 
-          <div>{getItemsLeft(this.state.todos)}</div>
+          <div>{getItemsLeft(this.state.todos.slice())}</div>
 
           <div className="filter-buttons">
               <button
@@ -233,8 +261,8 @@ class TodoRow extends Component {
             type="checkbox"
             id={"checkbox" + this.props.rowId}
             checked={this.props.todoItem.completed}
-            onClick={() => {
-              this.props.handleCheckChange(this.props.rowId);
+            onChange={() => {
+              this.props.handleCheckChange(this.props.todoItem.id);
             }}
           />
           <label htmlFor={"checkbox" + this.props.rowId} />
@@ -247,14 +275,14 @@ class TodoRow extends Component {
                 type="text"
                 defaultValue={this.props.todoItem.todoTitle}
                 className="border"
-                onBlur={ (e)  =>( this.props.handleUpdateItem(this.props.rowId, e.target.value)) }
-                onKeyUp={ (e) => ( e.key === 'Enter' ? this.props.handleUpdateItem(this.props.rowId, e.target.value) : '' )}
+                onBlur={ (e)  =>( this.props.handleUpdateItem(this.props.todoItem.id, e.target.value)) }
+                onKeyUp={ (e) => ( e.key === 'Enter' ? this.props.handleUpdateItem(this.props.todoItem.id, e.target.value) : '' )}
               /> :
               <p
                 className="todo-text"
                 style={ this.props.todoItem.completed ? {textDecoration: 'line-through'} : {textDecoration: 'none'} }
                 onDoubleClick={ () => {
-                  this.props.handleDoubleClick(this.props.rowId);
+                  this.props.handleDoubleClick(this.props.todoItem.id);
                 }}
             > { this.props.todoItem.todoTitle } </p>
           }
@@ -265,7 +293,7 @@ class TodoRow extends Component {
             id={"delete" + this.props.rowId}
             className="delete"
             onClick={ () => {
-              this.props.handleDeleteClick(this.props.rowId);
+              this.props.handleDeleteClick(this.props.todoItem.id);
             }}
           >&#x2715;</button>
         </div>
