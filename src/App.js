@@ -56,7 +56,7 @@ const getFilteredArray = (arr, filter) => {
   }
 }
 
-//HELPER FUNCTION:  Return an array that is checked
+//HELPER FUNCTION:  Check array to see if everything is completed, if it is return true, otherwise return false
 const allChecked = (arr) => {
   let allCheck = true;
   arr.forEach( todo => {
@@ -167,6 +167,7 @@ class App extends Component {
   }
 
   render() {
+
     return (
       <div className="App">
 
@@ -307,7 +308,7 @@ class TodoFilter extends Component {
             className={this.props.filter === 'active' ? 'selected' : ''}
             name="active"
             onClick={this.props.handleFilterClick}
-          >Acive</button>
+          >Active</button>
 
           <button
             className={this.props.filter === 'completed' ? 'selected' : ''}
