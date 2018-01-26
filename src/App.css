@@ -92,9 +92,14 @@ input::-webkit-input-placeholder {
 }
 
 .filter-buttons .selected {
-  border: 1px solid red;
+  border: 1px solid #FF6978;
+  border-radius: 5px
 }
 
+.down-arrow {
+  outline: 0;
+  font-size: 36px;
+}
 
 #clearCompleted:hover {
   text-decoration: underline;
@@ -112,8 +117,6 @@ input::-webkit-input-placeholder {
   height: 100%;
   width: 100%;
 }
-
-
 
 .delete {
   visibility: hidden;

@@ -43,6 +43,16 @@ const getFilteredArray = (arr, filter) => {
   }
 }
 
+const allChecked = (arr) => {
+  let allCheck = true;
+  arr.forEach( todo => {
+    if(!todo.completed) {
+      allCheck = false;
+    }
+  });
+  return allCheck;
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -50,11 +60,13 @@ class App extends Component {
     this.state = {
       newTodo: '',
       todos: [], // todoTitle '', completed boolean
-      filter: 'all'
+      filter: 'all',
+      allChecked: false
     }
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCheckAllToggle = this.handleCheckAllToggle.bind(this);
     this.handleCheckChange = this.handleCheckChange.bind(this);
     this.handleDeleteClick = this.handleDeleteClick.bind(this);
     this.handleDoubleClick = this.handleDoubleClick.bind(this);
@@ -70,6 +82,16 @@ class App extends Component {
   handleSubmit(e) {
     e.preventDefault();
     this.setState( {todos: this.state.todos.concat([createTodoObj(this.state.newTodo)]), newTodo: ''} );
+  }
+
+  handleCheckAllToggle() {
+    const checked = !allChecked(this.state.todos.slice());
+    const newTodoArray = this.state.todos.map( todo => {
+      console.log(todo);
+      return {todoTitle: todo.todoTitle, completed: checked, edit: todo.edit};
+    });
+    console.log(newTodoArray);
+    this.setState( {todos: newTodoArray, allChecked: checked} );
   }
 
   handleCheckChange(todoID) {
@@ -101,7 +123,7 @@ class App extends Component {
 
   handleFilterClick(e) {
     if(e.target.name !== this.state.filter){
-      this.setState( {filter: e.target.name} );
+      this.setState( {filter: e.target.name, allChecked: false} );
     }
   }
 
@@ -119,6 +141,16 @@ class App extends Component {
           <h1>{this.props.title}</h1>
         </header>
           <div className="row">
+            <button
+              className="down-arrow"
+              onClick={this.handleCheckAllToggle}
+              style={this.state.todos.length === 0 ? {visibility: 'hidden'} : {visibility: 'visible'}}
+            >
+              <i
+                className="fa fa-angle-down down-arrow"
+                style={this.state.allChecked ? {color: '#BDBDBD'} : {color: '#49474B'}}
+              />
+            </button>
             <form onSubmit={this.handleSubmit}  >
                 <input
                   type="text"
@@ -142,7 +174,7 @@ class App extends Component {
                   <input
                     type="checkbox"
                     id={"checkbox" + index}
-                    defaultChecked={todo.completed}
+                    checked={todo.completed}
                     onClick={() => {
                       this.handleCheckChange(index);
                     }}
@@ -177,7 +209,7 @@ class App extends Component {
                     onClick={ () => {
                       this.handleDeleteClick(index);
                     }}
-                  >X</button>
+                  >&#x2715;</button>
                 </div>
               </div>
             );
