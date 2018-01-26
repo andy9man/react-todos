@@ -59,7 +59,7 @@ class App extends Component {
 
     this.state = {
       newTodo: '',
-      todos: [], // todoTitle '', completed boolean
+      todos: [],
       filter: 'all',
       allChecked: false
     }
@@ -87,7 +87,6 @@ class App extends Component {
   handleCheckAllToggle() {
     const checked = !allChecked(this.state.todos.slice());
     const newTodoArray = this.state.todos.map( todo => {
-      console.log(todo);
       return {todoTitle: todo.todoTitle, completed: checked, edit: todo.edit};
     });
     console.log(newTodoArray);
@@ -163,55 +162,15 @@ class App extends Component {
           </div>
         {getFilteredArray(this.state.todos.slice(), this.state.filter).map( (todo, index) => {
             return (
-              <div
-                className="row row-item"
+              <TodoRow
                 key={index}
-                onMouseOver={ () => (document.getElementById("delete" + index).style.visibility = "visible")}
-                onMouseLeave={() => (document.getElementById("delete" + index).style.visibility = "hidden")}
-              >
-
-                <div className="round">
-                  <input
-                    type="checkbox"
-                    id={"checkbox" + index}
-                    checked={todo.completed}
-                    onClick={() => {
-                      this.handleCheckChange(index);
-                    }}
-                  />
-                  <label htmlFor={"checkbox" + index} />
-                </div>
-
-                <div className="todo-item" style={ {flexGrow: '2'} }>
-                  {
-                    todo.edit ?
-                      <input
-                        type="text"
-                        defaultValue={todo.todoTitle}
-                        className="border"
-                        onBlur={ (e)  =>( this.handleUpdateItem(index, e.target.value)) }
-                        onKeyUp={ (e) => ( e.key === 'Enter' ? this.handleUpdateItem(index, e.target.value) : '' )}
-                      /> :
-                      <p
-                        className="todo-text"
-                        style={ todo.completed ? {textDecoration: 'line-through'} : {textDecoration: 'none'} }
-                        onDoubleClick={ () => {
-                          this.handleDoubleClick(index);
-                        }}
-                    > { todo.todoTitle } </p>
-                  }
-                </div>
-
-                <div>
-                  <button
-                    id={"delete" + index}
-                    className="delete"
-                    onClick={ () => {
-                      this.handleDeleteClick(index);
-                    }}
-                  >&#x2715;</button>
-                </div>
-              </div>
+                rowId={index}
+                todoItem={todo}
+                handleCheckChange={this.handleCheckChange}
+                handleUpdateItem={this.handleUpdateItem}
+                handleDoubleClick={this.handleDoubleClick}
+                handleDeleteClick={this.handleDeleteClick}
+              />
             );
         })}
 
@@ -254,6 +213,65 @@ class App extends Component {
           <p>Creatively copied from todomvc.com</p>
         </footer>
       </div>
+    );
+  }
+}
+
+class TodoRow extends Component {
+
+  render() {
+    return (
+
+      <div
+        className="row row-item"
+        onMouseOver={ () => (document.getElementById("delete" + this.props.rowId).style.visibility = "visible")}
+        onMouseLeave={() => (document.getElementById("delete" + this.props.rowId).style.visibility = "hidden")}
+      >
+
+        <div className="round">
+          <input
+            type="checkbox"
+            id={"checkbox" + this.props.rowId}
+            checked={this.props.todoItem.completed}
+            onClick={() => {
+              this.props.handleCheckChange(this.props.rowId);
+            }}
+          />
+          <label htmlFor={"checkbox" + this.props.rowId} />
+        </div>
+
+        <div className="todo-item" style={ {flexGrow: '2'} }>
+          {
+            this.props.todoItem.edit ?
+              <input
+                type="text"
+                defaultValue={this.props.todoItem.todoTitle}
+                className="border"
+                onBlur={ (e)  =>( this.props.handleUpdateItem(this.props.rowId, e.target.value)) }
+                onKeyUp={ (e) => ( e.key === 'Enter' ? this.props.handleUpdateItem(this.props.rowId, e.target.value) : '' )}
+              /> :
+              <p
+                className="todo-text"
+                style={ this.props.todoItem.completed ? {textDecoration: 'line-through'} : {textDecoration: 'none'} }
+                onDoubleClick={ () => {
+                  this.props.handleDoubleClick(this.props.rowId);
+                }}
+            > { this.props.todoItem.todoTitle } </p>
+          }
+        </div>
+
+        <div>
+          <button
+            id={"delete" + this.props.rowId}
+            className="delete"
+            onClick={ () => {
+              this.props.handleDeleteClick(this.props.rowId);
+            }}
+          >&#x2715;</button>
+        </div>
+
+      </div>
+
     );
   }
 }
